@@ -20,15 +20,15 @@ public class Polaris extends Robot
 
 		// Robot main loop
 		while(true) {
-			ahead(100);
+			ahead(200);
 			turnGunRight(360);
-			back(100);
+			back(300);
 			turnGunRight(360);
 		}
 	}
 
 	/**
-	 * onScannedRobot: What to do when you see another robot
+	 * After seeing a robot, if gun is not overheated, fire.
 	 */
 	public void onScannedRobot(ScannedRobotEvent e) {
 		if (getGunHeat() == 0) {
@@ -44,9 +44,10 @@ public class Polaris extends Robot
 	}
 	
 	/**
-	 * onHitWall: What to do when you hit a wall
+	 * After hitting a wall, turn 135 degrees to the right and then move forward 400.
 	 */
 	public void onHitWall(HitWallEvent e) {
-		back(20);
+		turnRight(135);
+		ahead(400);
 	}	
 }
