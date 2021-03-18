@@ -13,13 +13,26 @@ public class Polaris extends Robot
 	 * run: Polaris's default behavior
 	 */
 	public void run() {
-		// Initialization of the robot should be put here
+		// get the size of our battlefield in pixels:
+		double y = getBattleFieldHeight();
+		double x = getBattleFieldWidth();
+		// get the size of our robot in pixels:
+		double yRobot = getHeight();
+		double xRobot = getWidth();
 
-		// Set colors of body, gun, radar, bullet and scan arc
-		setColors(Color.green,Color.green,Color.green,Color.green,Color.green);
+		// Setting colors with clearly named methods:
+		setBodyColor(new Color(38,81,82)); // teal
+		setGunColor(new Color(38,81,82)); // teal
+		setRadarColor(new Color(252, 186, 3)); // gold
+		setBulletColor(Color.white);
+		setScanColor(Color.white); 
 
 		// Robot main loop
 		while(true) {
+			/* We can customize movement later, based on battlefield size, robot size and robot location
+			 * double yLoc = getY();
+			 * double xLoc = getX();
+			 */
 			ahead(200);
 			turnGunRight(360);
 			back(300);
@@ -28,11 +41,11 @@ public class Polaris extends Robot
 	}
 
 	/**
-	 * After seeing a robot, if gun is not overheated, fire.
+	 * onScannedRobot: After seeing a robot, if gun is not overheated, fire.
 	 */
 	public void onScannedRobot(ScannedRobotEvent e) {
 		if (getGunHeat() == 0) {
-			fire(1);
+			fire(3);
 		}
 	}
 
