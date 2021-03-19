@@ -44,8 +44,10 @@ public class Polaris extends Robot
 	 * onScannedRobot: After seeing a robot, if gun is not overheated, fire.
 	 */
 	public void onScannedRobot(ScannedRobotEvent e) {
-		if (getGunHeat() == 0) {
+		if (e.getDistance() < 400 && getGunHeat() == 0) {
 			fire(3);
+		} else if (e.getDistance() > 399 && getGunHeat() == 0){
+			fire(1);
 		}
 	}
 
