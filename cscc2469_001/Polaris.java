@@ -52,17 +52,32 @@ public class Polaris extends Robot
 	}
 
 	/**
-	 * onHitByBullet: What to do when you're hit by a bullet
+	 * After being hit by a bullet, turn left 90 degrees from the direction bullet came.
 	 */
 	public void onHitByBullet(HitByBulletEvent e) {
-		back(10);
+		turnLeft(90 - e.getBearing());
 	}
 	
 	/**
-	 * After hitting a wall, turn 135 degrees to the right and then move forward 400.
+	 * After hitting a wall, turn 135 degrees to the right and then move forward 150 pixels.
 	 */
 	public void onHitWall(HitWallEvent e) {
 		turnRight(135);
-		ahead(400);
+		ahead(150);
+	}
+	
+	/**
+	 * After hitting a robot, get the bearings to the hit robot.  If robot is in the way, 
+	 * within 180 degrees of robot's heading, turn right 45 degrees and then move back 100 pixels.  
+	 * Otherwise turn left 45 degrees and then move forward 100 pixels.
+	 */
+	public void onHitRobot(HitRobotEvent e) {
+		if (e.getBearing() > -90 && e.getBearing() <= 90) {
+			turnRight(45);
+			back(100);
+		} else {
+			turnLeft(45);
+			ahead(100);
+		  }
 	}	
 }
