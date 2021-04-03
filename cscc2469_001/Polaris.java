@@ -87,10 +87,12 @@ public class Polaris extends Robot
 	}
 
 	/**
-	 * onHitByBullet: After being hit by a bullet, turn left 90 degrees from the direction bullet came.
+	 * onHitByBullet: After being hit by a bullet, if gun is not overheated, fire.  Then turn left 90 degrees from the direction bullet came.
 	 */
 	public void onHitByBullet(HitByBulletEvent e) {
-		turnLeft(90 - e.getBearing());
+		if (getGunHeat() == 0) {
+			fire(3);
+		} turnLeft(90 - e.getBearing());
 	}	
 
 	/**
@@ -102,12 +104,14 @@ public class Polaris extends Robot
 	}
 	
 	/**
-	 * onHitRobot: After hitting a robot, get the bearings to the hit robot. If robot is in the way, 
+	 * onHitRobot: After hitting a robot, if gun is not overheated, fire.  Then get the bearings to the hit robot. If robot is in the way, 
 	 * within 180 degrees of robot's heading, turn right 45 degrees and then move back 100 pixels.  
 	 * Otherwise turn left 45 degrees and then move forward 100 pixels.
 	 */
 	public void onHitRobot(HitRobotEvent e) {
-		if (e.getBearing() > -90 && e.getBearing() <= 90) {
+		if (getGunHeat() == 0) {
+			fire(3);
+		} if (e.getBearing() > -90 && e.getBearing() <= 90) {
 			turnRight(45);
 			back(100);
 		} else {
