@@ -14,13 +14,6 @@ public class Polaris extends Robot
 	 * run: Polaris's default behavior
 	 */
 	public void run() {
-		// get the size of our battlefield in pixels:
-		double y = getBattleFieldHeight();
-		double x = getBattleFieldWidth();
-		// get the size of our robot in pixels:
-		double yRobot = getHeight();
-		double xRobot = getWidth();
-
 		// Setting colors with clearly named methods:
 		setBodyColor(new Color(38,81,82)); // teal
 		setGunColor(new Color(38,81,82)); // teal
@@ -28,12 +21,9 @@ public class Polaris extends Robot
 		setBulletColor(Color.white);
 		setScanColor(Color.white); 
 
-		// Robot main loop
+		// A loop to move ahead by 200 pixels, then turn Gun clockwise 360 degrees.
+		// Move back by 300 pixels, then turn Gun clockwise 360 degrees.
 		while(true) {
-			/* We can customize movement later, based on battlefield size, robot size and robot location
-			 * double yLoc = getY();
-			 * double xLoc = getX();
-			 */
 			ahead(200);
 			turnGunRight(360);
 			back(300);
@@ -49,7 +39,10 @@ public class Polaris extends Robot
 	 * Thus our equation is neededBulletSpeed = dist / (heat / cooling); But, we can only get heat if we alredy know our firepower.
 	 * As we cannot solve for 2 unknowns (neededBulletSpeed, firepower), we assume a firepower and iterate to get the optimal fire rate.
 	 * We know the speed needed to travel that distance, and we get the realBulletSpeed (which is the actual speed of the bullet at that firepower).
-	 * If the bullet is
+	 * 
+	 * We use our newly found optimal fire rate in the vent there are less than 5 robots on the battlefield. If there are more than 5 robots,
+	 * our older and simpler approach seems to fare better. The old approach simply checks if the gun is overheated and if the distance to the enemy
+	 * is less than 400 pixels. If so, we fire a full-power (3) shot. If the distance is greater, we fire at a little over half the maximum power (1.8).
 	 */
 	public void onScannedRobot(ScannedRobotEvent e) {
 		if (getGunHeat() == 0 && getOthers() < 5) {
@@ -60,24 +53,22 @@ public class Polaris extends Robot
 			double neededBulletSpeed; // how fast the bullet needs to be, to have gun cooled by when it hits intended coordinates
 			double realBulletSpeed = 20 - power * 3; // this is the actual speed of the bullet at given power
 			
-			// let's try bullet power 3 heat = 1.6, dist 200, cooling 0.1 neededBulletSpeed => 
-
 			// Our equation is neededBulletSpeed = dist / (heat / cooling), we have to assume firepower to get heat.
 			// By starting at the highest power (3.0) we iterate down to (0.1) which covers all valid increments.
-			// If at any point neededBulletSpeed is less than realBulletSpeed we can fire. Using less rather than less or equal than to not have precision issues.
+			// If at any point neededBulletSpeed is less than realBulletSpeed we can fire.
 			while (power > 0) { 
-				/* Our ranking in 20+ battles fell from 4th/5th to 8th -- surprising given the elaborate approach.
-				 * So let's try adding some more power to the shots by adding a magic number to heat/cooling which is our frames/ticks 
+				/* Our performance deteriorated when optimizing for fire rate, so we introduced a magic number.
+				 * The magic number "5" increases the amount of ticks/frames we are willing to wait before we fire again, over the optimal cooldown time.
 				 */
-				neededBulletSpeed = dist / ((heat / cooling)+5); // Basically heat/cooling is frames, and we're okay with 5 extra frames for cooldown
+				neededBulletSpeed = dist / ((heat / cooling)+5); // This is where our magic number is introduced
 				if (neededBulletSpeed < realBulletSpeed) { /* This is when our gun will cool by the time the bullet hits intended coordinates */
 					fire(power);
-					return; // make sure to get out of this
+					return; // once we've fired, we want to exit the loop
 				}
-				power -= 0.1; // subtract 0.1 from power each iteration, power > 0 & start of 3.0 prevents invalid values
+				power -= 0.1; // firepower is only usable in increments of 0.1
 			}
 			fire(0.1); // if we find something so far away, that it's not optimal, we still want to fire
-		} else if (getGunHeat() == 0) { // reintroduced some old logic here since we were doing worse overall
+		} else if (getGunHeat() == 0) { // older and simpler logic that seems to perform better
 			if (e.getDistance() < 400 && getGunHeat() == 0) {
 				fire(3);
 			} else if (e.getDistance() > 399 && getGunHeat() == 0){
