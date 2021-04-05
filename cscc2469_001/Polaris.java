@@ -2,14 +2,11 @@ package cscc2469_001;
 import robocode.*;
 import java.awt.Color;
 
-// API help : https://robocode.sourceforge.io/docs/robocode/robocode/Robot.html
-
 /**
  * Polaris - a robot by Tomas Kasparaitis and Helen Baker
  */
 public class Polaris extends Robot
 {
-	
 	/**
 	 * run: Polaris's default behavior
 	 */
